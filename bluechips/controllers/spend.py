@@ -121,14 +121,16 @@ class SpendController(BaseController):
         # Set the fields that were submitted
         shares = self.form_result.pop('shares')
         update_sar(e, self.form_result)
-
-        users = dict(meta.Session.query(model.User.id, model.User).all())
-        split_dict = {}
-        for share_params in shares:
-            user = users[share_params['user_id']]
-            split_dict[user] = Decimal(str(share_params['amount']))
-        e.split(split_dict)
+	with meta.Session.no_autoflush:
+            users = dict(meta.Session.query(model.User.id, model.User).all())
+            split_dict = {}
+	    setattr(e, "spender", users[e.spender_id]);
+            for share_params in shares:
+                user = users[share_params['user_id']]
+                split_dict[user] = Decimal(str(share_params['amount']))
+            e.split(split_dict)
         
+
         meta.Session.commit()
        
         show = ("Expenditure of %s paid for by %s %s." %
@@ -164,7 +166,6 @@ class SpendController(BaseController):
         if 'delete' in request.params:
             meta.Session.delete(e)
 
-            meta.Session.commit()
             show = ("Expenditure of %s paid for by %s deleted." %
                     (e.amount, e.spender))
             h.flash(show)
@@ -176,5 +177,5 @@ class SpendController(BaseController):
                                       'op': 'deleted',
                                       'old_expenditure': None})
             g.handle_notification(involved_users, show, body)
-
+	    meta.Session.commit();
         return h.redirect_to('/')

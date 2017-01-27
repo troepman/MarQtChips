@@ -63,6 +63,11 @@ class TransferController(BaseController):
             op = 'updated'
         
         update_sar(t, self.form_result)
+	with meta.Session.no_autoflush:
+	    deb = meta.Session.query(model.User).get(t.debtor_id);
+	    cred = meta.Session.query(model.User).get(t.creditor_id);
+	    setattr(t, "debtor", deb);
+	    setattr(t, "creditor", cred);
         meta.Session.commit()
        
         show = ('Transfer of %s from %s to %s %s.' %
@@ -94,7 +99,6 @@ class TransferController(BaseController):
         if 'delete' in request.params:
             meta.Session.delete(t)
 
-            meta.Session.commit()
             show = ("Transfer of %s from %s to %s deleted." %
                     (t.amount, t.debtor, t.creditor))
             h.flash(show)
@@ -103,5 +107,6 @@ class TransferController(BaseController):
                           extra_vars={'transfer': t,
                                       'op': 'deleted'})
             g.handle_notification((t.debtor, t.creditor), show, body)
-
+	    
+	    meta.Session.commit();
         return h.redirect_to('/')
