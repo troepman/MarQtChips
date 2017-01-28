@@ -7,6 +7,7 @@ from bluechips.model.expenditure import Expenditure
 from bluechips.model.split import Split
 from bluechips.model.subitem import Subitem
 from bluechips.model.transfer import Transfer
+from bluechips.model.card import Card
 
 from bluechips.model import meta
 from bluechips.model import types
@@ -74,12 +75,22 @@ transfers = sa.Table('transfers', meta.metadata,
                                default=datetime.utcnow)
                      )
 
+cards = sa.Table('cards', meta.metadata,
+		     sa.Column('id', sa.types.Integer, primary_key=True),
+		     sa.Column('user_id', sa.types.Integer,
+		 	       sa.ForeignKey('users.id'), nullable=False),
+		     sa.Column('serial', sa.types.Integer, default=0),
+		     sa.Column('description', sa.types.Integer, default=None),
+		     sa.Column('entered_time', sa.types.DateTime, default=datetime.utcnow)
+		     );
+
+
 ### DB/Class Mapping ###
 
 orm.mapper(User, users,
            properties={
         'expenditures': orm.relation(Expenditure,
-                                     backref='spender')
+                                     backref='spender'),
 })
 
 orm.mapper(Expenditure, expenditures,
@@ -110,6 +121,12 @@ orm.mapper(Transfer, transfers,
                                                   users.c.id))
 })
 
-__all__ = ['users', 'expenditures', 'splits', 'subitems', 'transfers',
-           'User', 'Expenditure', 'Split', 'Subitem', 'Transfer',
+orm.mapper(Card, cards, properties={
+	   'user':orm.relation(User, 
+		primaryjoin=(cards.c.user_id==users.c.id))
+})
+
+
+__all__ = ['users', 'expenditures', 'splits', 'subitems', 'transfers', 'cards',
+           'User', 'Expenditure', 'Split', 'Subitem', 'Transfer', 'Card',
            'meta']
