@@ -1,4 +1,4 @@
-from types import Currency
+from bluechips.model.types import *
 
 class Split(object):
     def __init__(self, expenditure=None, user=None, share=Currency(0)):

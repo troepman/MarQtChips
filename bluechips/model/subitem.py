@@ -1,4 +1,4 @@
-from types import Currency
+from bluechips.model.types import Currency
 
 class Subitem(object):
     def __init__(self, expenditure=None, user=None, amount=Currency(0)):

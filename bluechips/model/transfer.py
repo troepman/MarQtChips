@@ -1,4 +1,4 @@
-from types import Currency
+from bluechips.model.types import Currency
 
 class Transfer(object):
     def __init__(self, debtor=None, creditor=None, amount=Currency(0)):
