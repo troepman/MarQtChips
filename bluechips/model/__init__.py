@@ -8,6 +8,7 @@ from bluechips.model.split import Split
 from bluechips.model.subitem import Subitem
 from bluechips.model.transfer import Transfer
 from bluechips.model.card import Card
+from bluechips.model.turfEntry import TurfEntry
 
 from bluechips.model import meta
 from bluechips.model import types
@@ -80,9 +81,17 @@ cards = sa.Table('cards', meta.metadata,
 		     sa.Column('user_id', sa.types.Integer,
 		 	       sa.ForeignKey('users.id'), nullable=False),
 		     sa.Column('serial', sa.types.Integer, default=0),
-		     sa.Column('description', sa.types.Integer, default=None),
+		     sa.Column('description', sa.Text, default=None),
 		     sa.Column('entered_time', sa.types.DateTime, default=datetime.utcnow)
 		     );
+turfEntries = sa.Table('turfEntries', meta.metadata,
+                     sa.Column('id', sa.types.Integer, primary_key=True),
+                     sa.Column('user_id', sa.types.Integer,
+                               sa.ForeignKey('users.id'), nullable=False),
+                     sa.Column('subject', sa.Text, default=None),
+                     sa.Column('entered_time', sa.types.DateTime,
+                               default = datetime.utcnow)
+                     )
 
 
 ### DB/Class Mapping ###
@@ -125,8 +134,11 @@ orm.mapper(Card, cards, properties={
 	   'user':orm.relation(User, 
 		primaryjoin=(cards.c.user_id==users.c.id))
 })
+orm.mapper(TurfEntry, turfEntries, properties={
+            'user':orm.relation(User,
+                primaryjoin=(turfEntries.c.user_id==users.c.id))
+})
 
-
-__all__ = ['users', 'expenditures', 'splits', 'subitems', 'transfers', 'cards',
-           'User', 'Expenditure', 'Split', 'Subitem', 'Transfer', 'Card',
+__all__ = ['users', 'expenditures', 'splits', 'subitems', 'transfers', 'cards','turfEntries',
+           'User', 'Expenditure', 'Split', 'Subitem', 'Transfer', 'Card','TurfEntry',
            'meta']
