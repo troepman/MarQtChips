@@ -2,4 +2,6 @@
 *.pyc
 BlueChips.egg-info
 data/
+dist/
+build/
 .coverage
