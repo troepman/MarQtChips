@@ -54,9 +54,11 @@ class NewUserSchema(AuthFormSchema):
 
 class UserController(BaseController):
     def index(self):
-        c.title = 'User Settings'
-	c.cards = meta.Session.query(model.Card).filter(cards.c.user_id==request.environ['user'].id)
-	raise Exception(c.cards.serial);
+        c.title = 'User Settings';
+	c.cards = "hello";
+	d = meta.Session.query(model.Card).filter(model.cards.c.user_id==request.environ['user'].id).all()
+	#raise exception("Ij hoofd: " + str(d));
+	c.cards = d;
         return render('/user/index.mako')
 
     def email(self):
