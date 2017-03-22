@@ -51,11 +51,15 @@ class NewUserSchema(AuthFormSchema):
         validators.FieldsMatch('password', 'confirm_password'),
         ]
 
+class CardSchema(AuthFormSchema):
+    "Validate card updates."
+    allow_extra_field = False
+    serialcode = validators.Number();
+    description = validators.String();
+
 
 class UserController(BaseController):
     def index(self):
-        c.title = 'User Settings';
-	c.cards = "hello";
 	d = meta.Session.query(model.Card).filter(model.cards.c.user_id==request.environ['user'].id).all()
 	#raise exception("Ij hoofd: " + str(d));
 	c.cards = d;
@@ -102,3 +106,50 @@ class UserController(BaseController):
 
         h.flash('Successfully created new user %s' % u.username)
         return h.redirect_to('/')
+
+    def edit_card(self, id=None):
+        
+        if id is None:
+            cs = meta.Session.query(model.Card).filter(model.cards.c.serial == 0).all();
+            for c1 in cs:
+                 meta.Session.delete(c1);
+            n = model.Card()
+            n.user = request.environ['user']
+            meta.Session.add(n)
+            meta.Session.commit()
+            c.card = n;
+            c.title = 'Add card'
+        else:
+            n = meta.Session.query(model.Card).get(id)
+            c.card = n;
+            c.title = 'Edit card'
+        return render('user/card.mako')
+
+    @validate(schema=CardSchema(), form='card')
+    @authenticate_form
+    def update_card(self, id):
+        if id is None:
+            abort(404)
+
+        n = meta.Session.query(model.Card).get(id)
+        n.description = self.form_result['description'];
+        
+        meta.Session.commit()
+
+        h.flash('Card has been updated')
+        return h.redirect_to('/user')
+
+    def remove_card(self, id=None):
+        if id is None:
+            abort(404)
+        n = meta.Session.query(model.Card).get(id)
+        meta.Session.delete(n)
+        meta.Session.commit();
+        h.flash('Card has been removed from your account')
+        return h.redirect_to('/user')
+	
+    def check_serial(self, id):
+        if id is None:
+             abort(404);
+        n = meta.Session.query(model.Card).get(id)
+        return n.serial
