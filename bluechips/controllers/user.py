@@ -110,6 +110,7 @@ class UserController(BaseController):
     def edit_card(self, id=None):
         
         if id is None:
+            # first delete all other new cards to prevent collision
             cs = meta.Session.query(model.Card).filter(model.cards.c.serial == 0).all();
             for c1 in cs:
                  meta.Session.delete(c1);
@@ -117,8 +118,7 @@ class UserController(BaseController):
             n.user = request.environ['user']
             meta.Session.add(n)
             meta.Session.commit()
-            c.card = n;
-            c.title = 'Add card'
+            return h.redirect_to(h.url_for(controller='user', action='edit_card', id = n.id))
         else:
             n = meta.Session.query(model.Card).get(id)
             c.card = n;
@@ -149,6 +149,7 @@ class UserController(BaseController):
         return h.redirect_to('/user')
 	
     def check_serial(self, id):
+        raise ValueError(id)
         if id is None:
              abort(404);
         n = meta.Session.query(model.Card).get(id)
