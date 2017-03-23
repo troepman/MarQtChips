@@ -58,6 +58,11 @@
               <span>User</span>
             </a>
           </td>
+          <td>
+            <a href="${h.url_for(controller='turf', action='index')}">
+            <span>Turf system</span>
+            </a>
+          </td>
         </tr>
       </table>
     </div>
@@ -146,10 +151,29 @@
   </table>
 </%def>
 
+<%def name="listTurf(ts, own, admin)">
+  <table class="list">
+    <tr>
+      <th class="date">Datum</th>
+      <th class="user">Persoon</th>
+      <th class="description">Omschrijving</th>
+      <th class="deletelink">Verwijderen?</th>
+    </tr>
+    % for t in ts:
+      <tr>
+        <td class="date">${t.entered_time}</td>
+        <td class="user">${formatUser(t.user)}</td>
+        <td class="description">${t.subject}</td>
+        <td class="deletelink">${h.link_to('Verwijder', h.url_for(controller='turf', action='delete', id=t.id))}</td>
+      </tr>
+    % endfor
+  </table>
+</%def>
+
 <%def name="expenditureIcon()">
 &larr;<span class="dollarsign">&rarr;
 </%def>
 
 <%def name="transferIcon()">
-<span class="dollarsign">$</span>&rarr;<span class="dollarsign">$</span>
+<span class="dollarsign">EUR</span> &rarr; <span class="dollarsign">EUR</span>
 </%def>
