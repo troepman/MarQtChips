@@ -6,5 +6,6 @@ ${self.listTurf(c.turfEntries, True, False)}
 
 <h2>Administratie</h2>
 <a href="${h.url_for(controller='turf', action='history')}">Bekijk mijn volledige geschiedenis</a>
-
+<br>
+<a href="${h.url_for(controller='turf', action='export')}">Exporteer data</a>
  
