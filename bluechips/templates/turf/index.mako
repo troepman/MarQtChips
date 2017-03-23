@@ -1,12 +1,10 @@
 <%inherit file="/base.mako" />
 
-<h2>Turf overview</h2>
-Op deze pagina kun jij jouw laatste turfjes terug vinden.
-<h4>Your recent history<h4>
+<h2>Your recent history</h2>
 
-${self.listTurf(c.turfEntries,False, False)}
+${self.listTurf(c.turfEntries, True, False)}
 
-<h4>Administratie</h4>
+<h2>Administratie</h2>
 <a href="${h.url_for(controller='turf', action='history')}">Bekijk mijn volledige geschiedenis</a>
 
  

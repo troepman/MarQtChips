@@ -60,7 +60,8 @@
           </td>
           <td>
             <a href="${h.url_for(controller='turf', action='index')}">
-            <span>Turf system</span>
+              <img src="${request.script_name}/icons/turf.png" alt="">
+              <span>Turfing</span>
             </a>
           </td>
         </tr>
@@ -155,16 +156,26 @@
   <table class="list">
     <tr>
       <th class="date">Datum</th>
-      <th class="user">Persoon</th>
+      <th class="date">Tijd</th>
+      % if not own:
+        <th class="user">Persoon</th>
+      % endif
       <th class="description">Omschrijving</th>
-      <th class="deletelink">Verwijderen?</th>
+      % if admin:
+        <th class="deletelink">Verwijderen?</th>
+      % endif
     </tr>
     % for t in ts:
       <tr>
-        <td class="date">${t.entered_time}</td>
-        <td class="user">${formatUser(t.user)}</td>
+        <td class="date">${t.entered_time.strftime("%Y-%m-%d")}</td>
+        <td class="date">${t.entered_time.strftime("%H:%M:%S")}</td>
+        % if not own:
+          <td class="user">${formatUser(t.user)}</td>
+        % endif
         <td class="description">${t.subject}</td>
-        <td class="deletelink">${h.link_to('Verwijder', h.url_for(controller='turf', action='delete', id=t.id))}</td>
+        % if admin:
+          <td class="deletelink">${h.link_to('Verwijder', h.url_for(controller='turf', action='delete', id=t.id))}</td>
+        % endif
       </tr>
     % endfor
   </table>
