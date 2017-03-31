@@ -5,6 +5,7 @@ class Card(object):
         self.serial = serial # pragma: nocover
         self.user = user # pragma: nocover
         self.description = description # pragma: nocover
+        self.valid = False;
         
     def __repr__(self):
         return ('<Card: card(%s) is of: %s described as: %s>' %

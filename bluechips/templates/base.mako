@@ -170,7 +170,7 @@
         <td class="date">${t.entered_time.strftime("%Y-%m-%d")}</td>
         <td class="date">${t.entered_time.strftime("%H:%M:%S")}</td>
         % if not own:
-          <td class="user">${formatUser(t.user)}</td>
+          <td class="user">${formatUser(t.card.user)}</td>
         % endif
         <td class="description">${t.subject}</td>
         % if admin:

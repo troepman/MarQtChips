@@ -54,13 +54,14 @@ class NewUserSchema(AuthFormSchema):
 class CardSchema(AuthFormSchema):
     "Validate card updates."
     allow_extra_field = False
-    serialcode = validators.Number();
     description = validators.String();
 
 
 class UserController(BaseController):
     def index(self):
-	d = meta.Session.query(model.Card).filter(model.cards.c.user_id==request.environ['user'].id).all()
+	d = meta.Session.query(model.Card).\
+        filter(model.cards.c.user_id==request.environ['user'].id).\
+        filter(model.cards.c.valid==1).all()
 	#raise exception("Ij hoofd: " + str(d));
 	c.cards = d;
         return render('/user/index.mako')
@@ -115,6 +116,7 @@ class UserController(BaseController):
             for c1 in cs:
                  meta.Session.delete(c1);
             n = model.Card()
+            n.valid = 1;
             n.user = request.environ['user']
             meta.Session.add(n)
             meta.Session.commit()
@@ -125,7 +127,7 @@ class UserController(BaseController):
             c.title = 'Edit card'
         return render('user/card.mako')
 
-    @validate(schema=CardSchema(), form='card')
+    @validate(schema=CardSchema(), form='edit_card')
     @authenticate_form
     def update_card(self, id):
         if id is None:
@@ -143,7 +145,8 @@ class UserController(BaseController):
         if id is None:
             abort(404)
         n = meta.Session.query(model.Card).get(id)
-        meta.Session.delete(n)
+        n.valid = 0
+        n.serial = -1;
         meta.Session.commit();
         h.flash('Card has been removed from your account')
         return h.redirect_to('/user')

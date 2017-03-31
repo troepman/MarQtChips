@@ -82,12 +82,13 @@ cards = sa.Table('cards', meta.metadata,
 		 	       sa.ForeignKey('users.id'), nullable=False),
 		     sa.Column('serial', sa.types.Integer, default=0),
 		     sa.Column('description', sa.Text, default=None),
+                     sa.Column('valid', sa.types.Integer, default=0),
 		     sa.Column('entered_time', sa.types.DateTime, default=datetime.utcnow)
 		     );
 turfEntries = sa.Table('turfEntries', meta.metadata,
                      sa.Column('id', sa.types.Integer, primary_key=True),
-                     sa.Column('user_id', sa.types.Integer,
-                               sa.ForeignKey('users.id'), nullable=False),
+                     sa.Column('card_id', sa.types.Integer,
+                               sa.ForeignKey('cards.id'), nullable=False),
                      sa.Column('subject', sa.Text, default=None),
                      sa.Column('entered_time', sa.types.DateTime,
                                default = datetime.utcnow)
@@ -135,8 +136,10 @@ orm.mapper(Card, cards, properties={
 		primaryjoin=(cards.c.user_id==users.c.id))
 })
 orm.mapper(TurfEntry, turfEntries, properties={
+            'card':orm.relation(Card,
+                primaryjoin=(turfEntries.c.card_id==cards.c.id)),
             'user':orm.relation(User,
-                primaryjoin=(turfEntries.c.user_id==users.c.id))
+                primaryjoin=(self.card.user_id==users.c.id))
 })
 
 __all__ = ['users', 'expenditures', 'splits', 'subitems', 'transfers', 'cards','turfEntries',

@@ -47,7 +47,7 @@ class TurfController(BaseController):
 
        if own == 1:
          c.turfEntries = webhelpers.paginate.Page(meta.Session.query(model.TurfEntry).\
-         filter(model.TurfEntry.user == request.environ['user']).\
+         filter(model.TurfEntry.card.user == request.environ['user']).\
            order_by(model.TurfEntry.entered_time.desc()),\
            page = p,\
            items_per_page = 20,
@@ -81,5 +81,5 @@ class TurfController(BaseController):
       writer = csv.writer(s)
       writer.writerow(['datetime', 'user', 'subject']);
       for turfEntry in turfEntries:
-        writer.writerow([turfEntry.entered_time, turfEntry.user.username, turfEntry.subject])
+        writer.writerow([turfEntry.entered_time, turfEntry.card.user.username, turfEntry.subject])
       return s.getvalue();    
