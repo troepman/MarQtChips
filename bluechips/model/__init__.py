@@ -139,7 +139,9 @@ orm.mapper(TurfEntry, turfEntries, properties={
             'card':orm.relation(Card,
                 primaryjoin=(turfEntries.c.card_id==cards.c.id)),
             'user':orm.relation(User,
-                primaryjoin=(self.card.user_id==users.c.id))
+                secondary=orm.join(cards, turfEntries, turfEntries.c.card_id==cards.c.id),
+                primaryjoin=(cards.c.user_id==users.c.id),
+                uselist=False)
 })
 
 __all__ = ['users', 'expenditures', 'splits', 'subitems', 'transfers', 'cards','turfEntries',

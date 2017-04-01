@@ -160,6 +160,9 @@
       % if not own:
         <th class="user">Persoon</th>
       % endif
+      % if admin:
+        <th class="desciption">Pas</th>
+      % endif
       <th class="description">Omschrijving</th>
       % if admin:
         <th class="deletelink">Verwijderen?</th>
@@ -171,6 +174,9 @@
         <td class="date">${t.entered_time.strftime("%H:%M:%S")}</td>
         % if not own:
           <td class="user">${formatUser(t.card.user)}</td>
+        % endif
+        % if admin:
+          <td class="description">${t.card.description}</td>
         % endif
         <td class="description">${t.subject}</td>
         % if admin:

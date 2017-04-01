@@ -32,7 +32,8 @@ class TurfController(BaseController):
     def overview(self):
        c.turfEntries = meta.Session.query(model.TurfEntry).\
            filter(model.TurfEntry.user == request.environ['user']).\
-           order_by(model.TurfEntry.entered_time.desc()).limit(10).all();
+           order_by(model.TurfEntry.entered_time.desc()).all()[:10]
+       print(c.turfEntries);
        return render('/turf/index.mako')
 
     def history(self):
@@ -47,11 +48,12 @@ class TurfController(BaseController):
 
        if own == 1:
          c.turfEntries = webhelpers.paginate.Page(meta.Session.query(model.TurfEntry).\
-         filter(model.TurfEntry.card.user == request.environ['user']).\
-           order_by(model.TurfEntry.entered_time.desc()),\
-           page = p,\
+         filter(model.TurfEntry.user == request.environ['user']).\
+           order_by(model.TurfEntry.entered_time.desc()).all(),
+           page = p,
            items_per_page = 20,
            own = own)
+         print(c.turfEntries)
        else:
          c.turfEntries = webhelpers.paginate.Page(meta.Session.query(model.TurfEntry).\
            order_by(model.TurfEntry.entered_time.desc()),\
