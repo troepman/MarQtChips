@@ -1,2 +1,2 @@
 from paste.deploy import loadapp
-application = loadapp("/var/www/html/MarQtChips/config.ini");
+application = loadapp("/root/MarQtChips/config.ini");
