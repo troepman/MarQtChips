@@ -66,7 +66,7 @@
           </td>
           <td>
             <a href="${h.url_for(controller='list', action='index')}">
-              <img src="${request.script_name}/icons/turf.png" alt="">
+              <img src="${request.script_name}/icons/shopping.png" alt="">
               <span>Shopping</span>
             </a>
           </td>
