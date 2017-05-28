@@ -211,7 +211,7 @@
              if (this.checked) // other way around
              {
                $.ajax({type: 'POST',
-                 url:'/list/check/${l.id}',
+                 url:'${h.url_for(controller='list', action='check', id=l.id)}',
                  success: function(data){this.enabled=true;},
                  error: function(data){alert('error');}
                  });
@@ -219,7 +219,7 @@
              else
              {
                $.ajax({type: 'POST',
-                 url:'/list/uncheck/${l.id}',
+                 url:'${h.url_for(controller='list', action='uncheck', id=l.id)}',
                  success: function(data){this.enabled=true;},
                  error: function(data){alert('error');}
                  });
