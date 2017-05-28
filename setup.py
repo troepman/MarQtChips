@@ -31,7 +31,7 @@ setup(
                       "AuthKit>=0.4.0",
                       "FormEncode>=1.2.1",
                       "mailer>=0.5"],
-    setup_requires=["PasteScript==dev,>=1.6.3dev-r7326"],
+    setup_requires=["PasteScript>=1.6.3"],
     packages=find_packages(exclude=['ez_setup']),
     include_package_data=True,
     test_suite='nose.collector',

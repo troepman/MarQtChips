@@ -9,6 +9,7 @@ from bluechips.model.subitem import Subitem
 from bluechips.model.transfer import Transfer
 from bluechips.model.card import Card
 from bluechips.model.turfEntry import TurfEntry
+from bluechips.model.listEntry import ListEntry
 
 from bluechips.model import meta
 from bluechips.model import types
@@ -93,7 +94,16 @@ turfEntries = sa.Table('turfEntries', meta.metadata,
                      sa.Column('entered_time', sa.types.DateTime,
                                default = datetime.utcnow)
                      )
-
+listEntries = sa.Table('listEntries', meta.metadata,
+                    sa.Column('id', sa.types.Integer, primary_key=True),
+                    sa.Column('subject', sa.Text, default=None),
+                    sa.Column('creater_id', sa.types.Integer, 
+                              sa.ForeignKey('users.id'), nullable=False),
+                    sa.Column('createdTime', sa.types.DateTime, default = datetime.utcnow),
+                    sa.Column('checker_id', sa.types.Integer,
+                              sa.ForeignKey('users.id')),
+                    sa.Column('checkedTime', sa.types.DateTime)
+                    )
 
 ### DB/Class Mapping ###
 
@@ -143,7 +153,13 @@ orm.mapper(TurfEntry, turfEntries, properties={
                 primaryjoin=(cards.c.user_id==users.c.id),
                 uselist=False)
 })
+orm.mapper(ListEntry, listEntries, properties={
+            'checker':orm.relation(User,
+                 primaryjoin=(listEntries.c.checker_id==users.c.id)),
+            'creater':orm.relation(User,
+                 primaryjoin=(listEntries.c.creater_id==users.c.id)),
+})
 
-__all__ = ['users', 'expenditures', 'splits', 'subitems', 'transfers', 'cards','turfEntries',
-           'User', 'Expenditure', 'Split', 'Subitem', 'Transfer', 'Card','TurfEntry',
+__all__ = ['users', 'expenditures', 'splits', 'subitems', 'transfers', 'cards', 'turfEntries', 'listEntries',
+           'User', 'Expenditure', 'Split', 'Subitem', 'Transfer', 'Card', 'TurfEntry', 'ListEntry',
            'meta']

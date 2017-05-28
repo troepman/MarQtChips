@@ -115,6 +115,7 @@ class UserController(BaseController):
             cs = meta.Session.query(model.Card).filter(model.cards.c.serial == 0).all();
             for c1 in cs:
                  meta.Session.delete(c1);
+            meta.Session.commit();
             n = model.Card()
             n.valid = 1;
             n.user = request.environ['user']
