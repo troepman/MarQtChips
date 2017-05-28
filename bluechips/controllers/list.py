@@ -32,9 +32,15 @@ class ListController(BaseController):
        return self.overview()
     
     def overview(self):
-       c.listEntries = meta.Session.query(model.ListEntry).\
-           order_by(model.ListEntry.createdTime.desc()).all()[:10]
-#       print(c.listEntries);
+       items = meta.Session.query(model.ListEntry).filter(model.listEntries.c.checker_id==None).\
+           order_by(model.ListEntry.createdTime.desc()).all();
+       if (len(items) < 20): # fill a bit
+         items_extra = meta.Session.query(model.ListEntry).filter(model.listEntries.c.checker_id.isnot(None)).\
+           order_by(model.ListEntry.createdTime.desc()).all()[:20-len(items)];
+         items.extend(items_extra);
+      
+       c.listEntries = items;
+
        return render('/list/index.mako')
 
     @authorize(BlueChipResident())
