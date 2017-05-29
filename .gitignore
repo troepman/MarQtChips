@@ -4,4 +4,6 @@ BlueChips.egg-info
 data/
 dist/
 build/
+*.eggs/
+*.egg/
 .coverage
