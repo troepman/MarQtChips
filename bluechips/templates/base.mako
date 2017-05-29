@@ -202,10 +202,13 @@
       <th class="user">Checked by</th>
       <th class="date">Checked on</th>
     </tr>
-    % for l in ls:
       <tr>
-        % if l.checker is None:
-          <td class="description"><input type="checkbox" onclick="
+        % for l in ls:
+          <td class="description"><input type="checkbox" 
+           % if l.checker is not None:
+             checked
+           % endif
+             onclick="
              this.enabled=false;
              //alert('checking');
              if (this.checked) // other way around
@@ -226,9 +229,6 @@
              }
           "/>
           </td>
-        % else:
-          <td class="description"><input type="checkbox" disabled checked></td>
-        % endif
         <td class="description">${l.subject}</td>
         <td class="user">${formatUser(l.creater)}</td>
         <td class="date">${l.createdTime.strftime("%m-%d %H:%M")}</td>
