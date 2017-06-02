@@ -121,7 +121,9 @@ class UserController(BaseController):
             n.user = request.environ['user']
             meta.Session.add(n)
             meta.Session.commit()
-            return h.redirect_to(h.url_for(controller='user', action='edit_card', id = n.id))
+            c.title = 'New card'
+            c.card = n;
+            return render('user/card.mako')
         else:
             n = meta.Session.query(model.Card).get(id)
             c.card = n;
