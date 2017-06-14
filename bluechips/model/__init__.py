@@ -147,11 +147,12 @@ orm.mapper(Card, cards, properties={
 })
 orm.mapper(TurfEntry, turfEntries, properties={
             'card':orm.relation(Card,
-                primaryjoin=(turfEntries.c.card_id==cards.c.id)),
+                primaryjoin=(turfEntries.c.card_id==cards.c.id), viewonly=True),
             'user':orm.relation(User,
                 secondary=orm.join(cards, turfEntries, turfEntries.c.card_id==cards.c.id),
                 primaryjoin=(cards.c.user_id==users.c.id),
-                uselist=False)
+                uselist=False,
+                viewonly=True)
 })
 orm.mapper(ListEntry, listEntries, properties={
             'checker':orm.relation(User,
