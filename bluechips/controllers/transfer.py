@@ -77,7 +77,7 @@ class TransferController(BaseController):
         # Send email notification to involved users if they have an email set.
         body = render('/emails/transfer.txt', extra_vars={'transfer': t,
                                                           'op': op})
-        g.handle_notification((t.debtor, t.creditor), show, body)
+        #g.handle_notification((t.debtor, t.creditor), show, body)
 
         return h.redirect_to('/')
 
@@ -106,7 +106,7 @@ class TransferController(BaseController):
             body = render('/emails/transfer.txt',
                           extra_vars={'transfer': t,
                                       'op': 'deleted'})
-            g.handle_notification((t.debtor, t.creditor), show, body)
+            #g.handle_notification((t.debtor, t.creditor), show, body)
 	    
 	    meta.Session.commit();
         return h.redirect_to('/')

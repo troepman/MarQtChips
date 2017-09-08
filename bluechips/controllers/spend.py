@@ -17,7 +17,7 @@ from formencode import validators, Schema
 from formencode.foreach import ForEach
 from formencode.variabledecode import NestedVariables
 from formencode.schema import SimpleFormValidator
-
+from sqlalchemy import exc
 from mailer import Message
 
 log = logging.getLogger(__name__)
@@ -106,16 +106,6 @@ class SpendController(BaseController):
             e = meta.Session.query(model.Expenditure).get(id)
             if e is None:
                 abort(404)
-
-            old_expenditure = render('/emails/expenditure.txt',
-                                     extra_vars={'expenditure': e,
-                                                 'op': 'previously',
-                                                 'old_expenditure': None})
-
-            # If a user gets removed from a transaction, they should
-            # still get an email
-            involved_users.update(sp.user for sp in e.splits if sp.share != 0)
-            involved_users.add(e.spender)
             op = 'updated'
         
         # Set the fields that were submitted
@@ -129,22 +119,24 @@ class SpendController(BaseController):
                 user = users[share_params['user_id']]
                 split_dict[user] = Decimal(str(share_params['amount']))
             e.split(split_dict)
-        
 
-        meta.Session.commit()
-       
+        try:
+            meta.Session.commit()
+        except exc.SQLAlchemyError as e:
+                print(e);
+                abort(404);
         show = ("Expenditure of %s paid for by %s %s." %
                 (e.amount, e.spender, op))
         h.flash(show)
 
         # Send email notification to involved users if they have an email set.
-        involved_users.update(sp.user for sp in e.splits if sp.share != 0)
-        involved_users.add(e.spender)
-        body = render('/emails/expenditure.txt',
-                      extra_vars={'expenditure': e,
-                                  'op': op,
-                                  'old_expenditure': old_expenditure})
-        g.handle_notification(involved_users, show, body)
+#        involved_users.update(sp.user for sp in e.splits if sp.share != 0)
+#        involved_users.add(e.spender)
+#        body = render('/emails/expenditure.txt',
+#                      extra_vars={'expenditure': e,
+#                                  'op': op,
+#                                  'old_expenditure': old_expenditure})
+        #g.handle_notification(involved_users, show, body)
 
         return h.redirect_to('/')
 
@@ -169,13 +161,9 @@ class SpendController(BaseController):
             show = ("Expenditure of %s paid for by %s deleted." %
                     (e.amount, e.spender))
             h.flash(show)
-
-            involved_users = set(sp.user for sp in e.splits if sp.share != 0)
-            involved_users.add(e.spender)
-            body = render('/emails/expenditure.txt',
-                          extra_vars={'expenditure': e,
-                                      'op': 'deleted',
-                                      'old_expenditure': None})
-            g.handle_notification(involved_users, show, body)
-	    meta.Session.commit();
+            try:
+	        meta.Session.commit();
+            except exc.SQLAlchemyError as e:
+                print(e);
+                abort(500)
         return h.redirect_to('/')
