@@ -75,10 +75,7 @@ class TransferController(BaseController):
         h.flash(show)
 
         # Send email notification to involved users if they have an email set.
-        body = render('/emails/transfer.txt', extra_vars={'transfer': t,
-                                                          'op': op})
-        #g.handle_notification((t.debtor, t.creditor), show, body)
-
+        print("New transfer created")
         return h.redirect_to('/')
 
     def delete(self, id):
@@ -103,10 +100,6 @@ class TransferController(BaseController):
                     (t.amount, t.debtor, t.creditor))
             h.flash(show)
 
-            body = render('/emails/transfer.txt',
-                          extra_vars={'transfer': t,
-                                      'op': 'deleted'})
-            #g.handle_notification((t.debtor, t.creditor), show, body)
-	    
+            print("Transfer deleted")	    
 	    meta.Session.commit();
         return h.redirect_to('/')
