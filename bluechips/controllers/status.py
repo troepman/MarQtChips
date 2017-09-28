@@ -15,21 +15,30 @@ from datetime import date, timedelta
 from bluechips.model.types import Currency
 
 from pylons import request
+import sys
 
 log = logging.getLogger(__name__)
 
 class StatusController(BaseController):
     def index(self):
-        c.debts = debts()
-        c.settle = settle(c.debts)
-
+        try:
+            print("begining")
+            c.debts = debts()
+            print("step 1")
+            c.settle = settle(c.debts)
+        except:
+            print("catching");
+            print( "Unexpected error:")
+            print( sys.exc_info()[0])
+            print(sys.exc_info()[1]);
+            print(sys.exc_info())
         c.net = 0
         for from_user, to_user, amount in c.settle:
             if from_user == request.environ['user']:
                 c.net -= amount
             elif to_user == request.environ['user']:
                 c.net += amount
-        
+        print("Got data no printing") 
         periods = {}
         periods['Total'] = (None, None)
         periods['Past year'] = (date.today() - timedelta(days=365), None)

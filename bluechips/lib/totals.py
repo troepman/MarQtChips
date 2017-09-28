@@ -24,36 +24,27 @@ def debts():
     debts_dict = dict((u, Currency(0)) for u in users)
     
     # First, credit everyone for expenditures they've made
-    total_expenditures = meta.Session.query(model.Expenditure).\
-        add_column(sqlalchemy.func.sum(model.Expenditure.amount).label('total_spend')).\
-        group_by(model.Expenditure.spender_id)
-    for expenditure, total_spend in total_expenditures:
-        debts_dict[expenditure.spender] -= total_spend
+    total_expenditures = meta.Session.query(model.Expenditure).all()
+    for expenditure in total_expenditures:
+        debts_dict[expenditure.spender] -= expenditure.amount
     
     # Next, debit everyone for expenditures that they have an
     # investment in (i.e. splits)
     
-    total_splits = meta.Session.query(model.Split).\
-        add_column(sqlalchemy.func.sum(model.Split.share).label('total_split')).\
-        group_by(model.Split.user_id)
-    
-    for split, total_cents in total_splits:
-        debts_dict[split.user] += total_cents
+    total_splits = meta.Session.query(model.Split).all()    
+    for split in total_splits:
+        debts_dict[split.user] +=  split.share
     
     # Finally, move transfers around appropriately
     #
     # To keep this from getting to be expensive, have SQL sum up
     # transfers for us
     
-    transfer_q = meta.Session.query(model.Transfer).\
-        add_column(sqlalchemy.func.sum(model.Transfer.amount).label('total_amount'))
-    total_debits = transfer_q.group_by(model.Transfer.debtor_id)
-    total_credits = transfer_q.group_by(model.Transfer.creditor_id)
+    transfers = meta.Session.query(model.Transfer).all();
     
-    for transfer, total_amount in total_debits:
-        debts_dict[transfer.debtor] -= total_amount
-    for transfer, total_amount in total_credits:
-        debts_dict[transfer.creditor] += total_amount
+    for transfer in transfers:
+        debts_dict[transfer.debtor] -= transfer.amount
+        debts_dict[transfer.creditor] += transfer.amount
     
     return debts_dict
 
